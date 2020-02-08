@@ -23,13 +23,14 @@ class VideoSpider(scrapy.Spider):
     def parse_next(self, response):
         le = LinkExtractor(restrict_xpaths='//tr[position()>8]/td[2]/h3/a')
         links = le.extract_links(response)
-        next = LinkExtractor(restrict_xpaths='//div[@id="main"]/div[10]/span[2]/div/a/')
+        next_link = LinkExtractor(restrict_xpaths='//div[@id="main"]/div[10]/span[2]/div/a')
+        next_links = next_link.extract_links(response)
         if links:
             for link in links:
                 url = link.url
                 yield scrapy.Request(url, callback=self.parse_video)
-        if next:
-            for next_link in next:
+        if next_links:
+            for next_link in next_links:
                 next_url = next_link.url
                 yield scrapy.Request(next_url,callback=self.parse_next)
     def parse_video(self, response):
